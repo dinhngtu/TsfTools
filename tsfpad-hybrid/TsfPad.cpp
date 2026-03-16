@@ -4,19 +4,17 @@
 #include "private.h"
 #include "TsfPad.h"
 #include "TextInputCtrl.h"
-#include <detours.h>
 //
 // MSIME.H can be found in http://msdn2.microsoft.com/en-us/library/ms970233.aspx
 //
 #include "msime.h"
 #include "DisplayAttribute.h"
 
-// #define HOOK_DETOUR 1
 // #define HOOK_WM_GETMESSAGE 1
 
-static BOOL(WINAPI *TrueGetMessageW)(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax) = GetMessageW;
+static BOOL(WINAPI* TrueGetMessageW)(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax) = GetMessageW;
 
-void DumpMessage(const wchar_t *pszPrefix, LPMSG lpMsg) {
+void DumpMessage(const wchar_t* pszPrefix, LPMSG lpMsg) {
     if (!lpMsg)
         return;
 
@@ -57,13 +55,6 @@ BOOL WINAPI HookGetMessageW(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMs
 }
 
 void InstallHooks() {
-#ifdef HOOK_DETOUR
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&(PVOID &)TrueGetMessageW, HookGetMessageW);
-    DetourTransactionCommit();
-#endif
-
 #ifdef HOOK_WM_GETMESSAGE
     SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, NULL, GetCurrentThreadId());
 #endif
@@ -83,17 +74,17 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 HWND g_hwnd;
-CTextInputCtrl *g_pTextInputCtrl;
+CTextInputCtrl* g_pTextInputCtrl;
 
-ITfThreadMgr *g_pThreadMgr = NULL;
+ITfThreadMgr* g_pThreadMgr = NULL;
 TfClientId g_TfClientId = TF_CLIENTID_NULL;
 
-ITfKeystrokeMgr *g_pKeystrokeMgr = NULL;
+ITfKeystrokeMgr* g_pKeystrokeMgr = NULL;
 
 #define USE_MESSAGEPUMP 1
 
 #ifdef USE_MESSAGEPUMP
-ITfMessagePump *g_pMessagePump = NULL;
+ITfMessagePump* g_pMessagePump = NULL;
 #endif
 
 UINT WM_MSIME_MOUSE = 0;
@@ -115,11 +106,7 @@ int APIENTRY MyWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
     HRESULT hr;
     if (FAILED(
             hr = CoCreateInstance(
-                CLSID_TF_ThreadMgr,
-                NULL,
-                CLSCTX_INPROC_SERVER,
-                IID_ITfThreadMgr,
-                (void **)&g_pThreadMgr))) {
+                CLSID_TF_ThreadMgr, NULL, CLSCTX_INPROC_SERVER, IID_ITfThreadMgr, (void**)&g_pThreadMgr))) {
         HRESULT_PRINT(hr, L"CoCreateInstance(CLSID_TF_ThreadMgr) failed");
         goto Exit;
     }
@@ -129,13 +116,13 @@ int APIENTRY MyWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
         goto Exit;
     }
 
-    if (FAILED(hr = g_pThreadMgr->QueryInterface(IID_ITfKeystrokeMgr, (void **)&g_pKeystrokeMgr))) {
+    if (FAILED(hr = g_pThreadMgr->QueryInterface(IID_ITfKeystrokeMgr, (void**)&g_pKeystrokeMgr))) {
         HRESULT_PRINT(hr, L"g_pThreadMgr->QI(IID_ITfKeystrokeMgr) failed");
         goto Exit;
     }
 
 #ifdef USE_MESSAGEPUMP
-    if (FAILED(hr = g_pThreadMgr->QueryInterface(IID_ITfMessagePump, (void **)&g_pMessagePump))) {
+    if (FAILED(hr = g_pThreadMgr->QueryInterface(IID_ITfMessagePump, (void**)&g_pMessagePump))) {
         HRESULT_PRINT(hr, L"g_pThreadMgr->QI(IID_ITfMessagePump) failed");
         goto Exit;
     }
@@ -263,17 +250,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
     g_hInst = hInstance; // Store instance handle in our global variable
 
     g_hwnd = CreateWindow(
-        szWindowClass,
-        szTitle,
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT,
-        0,
-        800,
-        600,
-        NULL,
-        NULL,
-        hInstance,
-        NULL);
+        szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, 800, 600, NULL, NULL, hInstance, NULL);
 
     if (!g_hwnd) {
         WINERROR_GLE_RETURN_HRESULT(L"CreateWindow failed");

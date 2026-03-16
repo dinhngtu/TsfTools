@@ -6,8 +6,8 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="TfDebug/TfDebug.csproj" />
-  <Project Path="TfDumper/TfDumper.vcxproj" />
-  <Project Path="tsfpad-hybrid/TsfPad-Hybrid.vcxproj">
+  <Project Path="TfDumper/TfDumper.vcxproj" Id="62f82c74-9fdc-4673-b392-06399e06ce45" />
+  <Project Path="tsfpad-hybrid/TsfPad-Hybrid.vcxproj" Id="d4b6765a-fb8b-4a18-bf4c-4ee7250e32a9">
     <Platform Solution="*|ARM64" Project="x64" />
     <Platform Solution="*|ARM64EC" Project="x64" />
   </Project>

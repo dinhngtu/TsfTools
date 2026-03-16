@@ -1,9 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2018 Dinh Ngoc Tu
 // SPDX-License-Identifier: GPL-3.0-only
 
-#include "stdafx.h"
-#include "Common.h"
-#include "Compartment.h"
+#include <Windows.h>
+#include <stdio.h>
+#include <wchar.h>
+#include <vector>
+#include <string>
+#include <atlbase.h>
+#include <atlcomcli.h>
+#include <msctf.h>
 
 #define CHECK(hr, fmt, ...)                                                                                            \
     if (FAILED(hr)) {                                                                                                  \
